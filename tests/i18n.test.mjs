@@ -18,8 +18,8 @@ import {
   AUDIT_CLI_HINT,
   COMMAND_DESCRIPTIONS,
   EXPLORER_BUTTON_TEXT,
-  HELP_LINES,
-  HELP_OPERATOR_LINES,
+  HELP_INTRO,
+  HELP_TITLE,
   NOTIFICATION_MD,
   NOTIFICATION_PLAIN,
   PAUSE_MESSAGES,
@@ -156,30 +156,23 @@ function baseStatus(overrides = {}) {
   };
 }
 
-// ── HELP_LINES ───────────────────────────────────────────────────────────────
+// ── HELP_TITLE / HELP_INTRO ──────────────────────────────────────────────────
 
-test("HELP_LINES is a non-empty array of strings", () => {
-  assert.ok(Array.isArray(HELP_LINES));
-  assert.ok(HELP_LINES.length > 0);
-  for (const line of HELP_LINES) {
-    assert.equal(typeof line, "string");
-  }
+test("HELP_TITLE and HELP_INTRO are non-empty strings", () => {
+  assert.equal(HELP_TITLE, "*Mimir notifier*");
+  assert.equal(typeof HELP_INTRO, "string");
+  assert.ok(HELP_INTRO.length > 0);
 });
 
-test("HELP_LINES starts with the bot title and ends with /help line", () => {
-  assert.equal(HELP_LINES[0], "*Mimir notifier*");
-  assert.ok(HELP_LINES.at(-1).includes("/help"));
-});
-
-test("HELP_OPERATOR_LINES contains pause and resume entries", () => {
-  assert.ok(HELP_OPERATOR_LINES.some((l) => l.includes("/pause")));
-  assert.ok(HELP_OPERATOR_LINES.some((l) => l.includes("/resume")));
-});
-
-test("HELP_LINES does not contain operator-only commands by itself", () => {
-  const combined = HELP_LINES.join("\n");
-  assert.equal(combined.includes("/pause"), false);
-  assert.equal(combined.includes("/resume"), false);
+test("/help renders the title, escaped intro and registry descriptions", async () => {
+  const { handlers } = mockedBot({ config: baseConfig(), status: () => baseStatus() });
+  const replies = [];
+  await handlers.get("help")({ reply: async (text) => replies.push(text) });
+  const text = replies[0];
+  assert.ok(text.startsWith(HELP_TITLE));
+  assert.ok(text.includes("on\\-chain event"));
+  assert.ok(text.includes(COMMAND_DESCRIPTIONS.pause));
+  assert.ok(text.includes(COMMAND_DESCRIPTIONS.resume));
 });
 
 // ── PAUSE_MESSAGES / RESUME_MESSAGES ─────────────────────────────────────────

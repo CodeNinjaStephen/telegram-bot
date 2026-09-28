@@ -21,31 +21,15 @@
 
 // ── Bot: help and lifecycle ──────────────────────────────────────────────────
 
-/**
- * Base help text lines (MarkdownV2). Sent as-is for users without an operator
- * id; the caller splices in operator-only lines before the last entry.
- */
-export const HELP_LINES: readonly string[] = [
-  "*Mimir notifier*",
-  "",
-  "I watch Mimir's two Soroban contracts on Stellar and post every new on\\-chain event here: claims opened, challenges staked, oracle resolutions, settlements and payouts\\.",
-  "",
-  "/status — what I am watching and how far I have read",
-  "/audit — the operator audit report, redacted and bounded (operator only)",
-  "/contracts — the contract ids I watch and where to look them up",
-  "/health — health assessment and operational readiness",
-  "/preview — preview channel notification formatting",
-  "/help — this message",
-];
+/** Help title (MarkdownV2). */
+export const HELP_TITLE = "*Mimir notifier*";
 
 /**
- * Operator-only command descriptions appended to {@link HELP_LINES} when an
- * operator id is configured. The last entry of HELP_LINES ("/help") stays last.
+ * Help intro (plain text). The caller escapes it with `escapeMd`; the command
+ * lines are generated from the command registry and COMMAND_DESCRIPTIONS.
  */
-export const HELP_OPERATOR_LINES: readonly string[] = [
-  "/pause — operator only: pause scheduling new scans",
-  "/resume — operator only: resume polling now",
-];
+export const HELP_INTRO =
+  "I watch Mimir's two Soroban contracts on Stellar and post every new on-chain event here: claims opened, challenges staked, oracle resolutions, settlements and payouts.";
 
 // ── Bot: operator controls (MarkdownV2) ─────────────────────────────────────
 
@@ -78,7 +62,7 @@ export const COMMAND_DESCRIPTIONS = {
   start: "What this bot does",
   help: "Show help",
   status: "Last-seen ledger and watched contracts",
-  audit: "Operator audit report (redacted, bounded)",
+  audit: "Operator only: audit report (redacted, bounded)",
   contracts: "Contract ids and explorer links",
   health: "Health assessment and operational readiness",
   preview: "Preview channel notification formatting",
